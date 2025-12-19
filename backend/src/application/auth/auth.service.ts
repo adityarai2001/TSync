@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { comparePassword } from '../../common/utils/password.util';
+import { platform } from 'os';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,13 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        email: true,
+        password: true,
+        platformRole: true,
+        status: true,
+      },
     });
 
     if (!user) {
@@ -27,6 +35,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
+      platformRole: user.platformRole,
     };
 
     return {
