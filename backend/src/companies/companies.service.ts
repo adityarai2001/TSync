@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { RecordStatus, CompanyRole } from '@prisma/client';
+import { PrismaService } from '../infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class CompanyService {
