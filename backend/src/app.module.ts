@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AuthModule } from './interfaces/auth/auth.module';
-import { CompanyModule } from './interfaces/company/company.module';
-import { UsersController } from './interfaces/users/user.controller';
+import { AuthModule } from './auth/auth.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
-    CompanyModule, // ✅ THIS WAS MISSING
+    CompaniesModule,
   ],
-  controllers: [UsersController],
 })
 export class AppModule {}
