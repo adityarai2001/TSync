@@ -37,14 +37,16 @@ model User {
 model Company {
   id          String   @id @default(uuid())
   name        String
-  emailDomain String   // NEW: example "companyorg.com"
+  emailDomain String
   status      RecordStatus @default(ACTIVE)
 
   members     CompanyMember[]
+  invites     Invite[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
 
 
 model CompanyMember {
@@ -73,3 +75,27 @@ enum PlatformRole {
   SUPER_ADMIN
   USER
 }
+
+enum InviteStatus {
+  PENDING
+  USED
+  EXPIRED
+}
+
+model Invite {
+  id               String        @id @default(uuid())
+
+  companyId        String
+  email            String
+  role             CompanyRole
+
+  tempPasswordHash String
+  token            String        @unique
+  expiresAt        DateTime
+  status           InviteStatus  @default(PENDING)
+
+  company          Company       @relation(fields: [companyId], references: [id])
+
+  createdAt        DateTime      @default(now())
+}
+
