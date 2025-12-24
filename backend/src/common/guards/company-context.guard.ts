@@ -14,29 +14,28 @@ export class CompanyContextGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
-    const companyId = req.headers['x-company-id'] as string;
-    if (!companyId) {
-      throw new ForbiddenException('Company context missing');
+    if (!req.user?.userId) {
+      throw new ForbiddenException('User not authenticated');
     }
 
-    const membership = await this.prisma.companyMember.findUnique({
+    const membership = await this.prisma.companyMember.findFirst({
       where: {
-        userId_companyId: {
-          userId: req.user.userId,
-          companyId,
-        },
+        userId: req.user.userId,
+        status: 'ACTIVE',
       },
     });
 
-    if (!membership || membership.status !== 'ACTIVE') {
-      throw new ForbiddenException('No access to this company');
+    if (!membership) {
+      throw new ForbiddenException('No active company membership');
     }
 
-    req.company = {
-      companyId,
-      companyMemberId: membership.id,
-      role: membership.role,
-    };
+    req.user.companyId = membership.companyId;
+    req.user.companyMemberId = membership.id;
+    if (membership.role === 'SUPER_ADMIN') {
+      throw new ForbiddenException('Super admin cannot act as company member');
+    }
+
+    req.user.companyRole = membership.role as 'ADMIN' | 'HR' | 'MANAGER' | 'EMPLOYEE';
 
     return true;
   }

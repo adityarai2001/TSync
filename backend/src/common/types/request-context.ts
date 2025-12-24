@@ -8,6 +8,10 @@ export interface AuthenticatedRequest extends Request {
   user: {
     userId: string;
     email: string;
+    platformRole?: string;
+
+    companyId?: string;
+    companyMemberId?: string;
+    companyRole?: 'ADMIN' | 'HR' | 'MANAGER' | 'EMPLOYEE';
   };
-  company?: CompanyContext;
 }
