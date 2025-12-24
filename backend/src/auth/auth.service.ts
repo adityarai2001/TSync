@@ -33,11 +33,10 @@ export class AuthService {
     }
 
     const payload = {
-      sub: user.id,
+      userID: user.id,
       email: user.email,
       platformRole: user.platformRole,
     };
-
     return {
       accessToken: this.jwtService.sign(payload),
     };
