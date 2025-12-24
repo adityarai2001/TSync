@@ -1,21 +1,13 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
-import { CompanyService } from './companies.service';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.gaurd';
-import { Roles } from '../common/decorators/roles.decorators';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CompaniesService } from './companies.service';
+import { RegisterCompanyDto } from './dto/register-company.dto';
 
-@Controller('admin/companies')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('SUPER_ADMIN')
-export class CompanyController {
-  constructor(private readonly companyService: CompanyService) {}
+@Controller('companies')
+export class CompaniesController {
+  constructor(private readonly companiesService: CompaniesService) {}
 
-  @Post()
-  create(@Req() req: any, @Body() body: any) {
-    return this.companyService.createCompany(
-      req.user.userId,
-      body.name,
-      body.emailDomain,
-    );
+  @Post('register')
+  registerCompany(@Body() dto: RegisterCompanyDto) {
+    return this.companiesService.registerCompany(dto);
   }
 }
